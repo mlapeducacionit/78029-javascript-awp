@@ -47,7 +47,7 @@ git add .
 git commit -m "Arranco la PWA"
 ```
 
-4. Ver el listado de comits
+4. Ver el listado de commits
 
 ```sh
 git log --oneline
