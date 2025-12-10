@@ -1,18 +1,13 @@
 import Swal from 'sweetalert2'
 import './style.css'
 import handleNotificacion from './utils/handle-notificacion'
+import handleHttp from './utils/handle-http'
 
 // ! -------------------
 // ! Variables GLOBALES
 // ! -------------------
 
-let listaProductos = [
-    { nombre: 'Carne', cantidad: 2, precio: 12.4 },
-    { nombre: 'Pan', cantidad: 5, precio: 23.4 },
-    { nombre: 'Fideos', cantidad: 3, precio: 21.4 },
-    { nombre: 'Leche', cantidad: 8, precio: 32.4 },
-    { nombre: 'Pollo', cantidad: 1, precio: 42.4 }
-]
+let listaProductos = []
 
 let crearLista = true // Creo esta bandera para evitar que se vuelva a renderizar todo el array
 let ul
@@ -216,13 +211,31 @@ function eventoCambiarCantidadYPrecio() {
     })
 }
 
-function start() {
-    console.log('Se cargó todo el DOM!')
-    renderLista()
-    eventoIngresoProducto()
-    eventoBorradoProductos()
-    eventoBorradoUnProducto()
-    eventoCambiarCantidadYPrecio()
+async function peticionAsincronica() {
+
+    try {
+        const productos = await handleHttp('http://localhost:8080/productos/')
+        console.log(productos)
+        listaProductos = productos
+
+    } catch (error) {
+        throw error
+    }
+
+}
+
+async function start() {
+    try {
+        console.log('Se cargó todo el DOM!')
+        await peticionAsincronica()
+        renderLista()
+        eventoIngresoProducto()
+        eventoBorradoProductos()
+        eventoBorradoUnProducto()
+        eventoCambiarCantidadYPrecio()
+    } catch (error) {
+        console.error(error)
+    }
 }
 
 document.addEventListener('DOMContentLoaded', start)
