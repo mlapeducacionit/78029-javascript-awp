@@ -8,7 +8,8 @@ const handleNotificacion = (objetoMensajes, cb) => {
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonText: "¡Borrar!",
+            cancelButtonText: "Noooo lo borres"
             }).then((result) => {
                 if (result.isConfirmed) {
                     cb()

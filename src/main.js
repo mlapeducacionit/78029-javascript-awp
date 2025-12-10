@@ -66,20 +66,20 @@ function renderLista() {
                    </span>
                   <!-- Cantidad -->
                    <span class="w-24">
-                    <label for="" class="block text-xs text-gray-500">Cantidad</label>
-                    <input type="text" value="${prod.cantidad}" class="mt-1 w-full border border-gray-300 rounded-md text-sm p-1 text-center focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <label for="lbl-cantidad-${indice}" class="block text-xs text-gray-500">Cantidad</label>
+                    <input data-tipo="cantidad" type="text" id="lbl-cantidad-${indice}" value="${prod.cantidad}" class="input-cantidad mt-1 w-full border border-gray-300 rounded-md text-sm p-1 text-center focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                    </span>
                   <!-- Precio -->
                     <span class="w-24">
-                      <label for="" class="block text-xs text-gray-500">Precio</label>
-                      <input type="text" value="${prod.precio}" class="mt-1 w-full border border-gray-300 rounded-md text-sm p-1 text-center focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                      <label for="lbl-precio-${indice}" class="block text-xs text-gray-500">Precio</label>
+                      <input data-tipo="precio" type="text" id="lbl-precio-${indice}" value="${prod.precio}" class="input-precio mt-1 w-full border border-gray-300 rounded-md text-sm p-1 text-center focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </span>
                   <!-- Borrar un producto -->
                    <span class="w-12 flex justify-center">
                     <button 
-                        class="flex items-center justify-around bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 shadow transition cursor-pointer ms-2"
+                        class="material-icons btn-borrar flex items-center justify-around bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 shadow transition cursor-pointer ms-2"
                         data-indice="${indice}">
-                      <i class="material-icons">remove_shopping_cart</i>
+                        remove_shopping_cart
                     </button>
                    </span>
             </li>
@@ -161,11 +161,68 @@ function eventoBorradoProductos() {
     })
 }
 
+function borrarProducto(indice) {
+
+    const nombreProductoABorrar = listaProductos[indice].nombre
+
+    const objMensajes = {
+        textoPrincipal: `¿Estás seguro que queres borrar ${nombreProductoABorrar}?`,
+        descripcion:  "No vas a poder volver a atrás",
+        textoSecundario: "Borrado el producto!",
+        descripcionSecundaria: `Se borró ${nombreProductoABorrar}`,
+    }
+
+    handleNotificacion(objMensajes, () => {
+        listaProductos.splice(indice, 1)
+        renderLista()
+    })
+
+    
+}
+
+function eventoBorradoUnProducto() {
+    document.getElementById('lista').addEventListener('click', e => {
+        //console.log('Hicieron clic sobre cualquier elemento dentro de la lista')
+        //console.log(e.target);
+
+        //console.log(e.target.classList.contains('btn-borrar')) // true o false
+        if ( e.target.classList.contains('btn-borrar') ) {
+            
+            //console.log(e.target.dataset.indice)
+
+            const indice = e.target.dataset.indice
+
+            borrarProducto(indice)
+
+        }
+    })
+}
+
+function eventoCambiarCantidadYPrecio() {
+
+    function cambiarValor(tipo, elemento) {
+        const boton = elemento.parentElement.parentElement.querySelector('button')
+        const indice = boton.dataset.indice
+        const precio = elemento.value
+
+        listaProductos[indice][tipo] = Number(precio) // input -> nos van devolver un cadena
+    }
+
+    document.getElementById('lista').addEventListener('change', e => {
+        const tipo = e.target.dataset.tipo
+        const input = e.target
+        cambiarValor(tipo, input)
+        console.log(listaProductos)
+    })
+}
+
 function start() {
     console.log('Se cargó todo el DOM!')
     renderLista()
     eventoIngresoProducto()
     eventoBorradoProductos()
+    eventoBorradoUnProducto()
+    eventoCambiarCantidadYPrecio()
 }
 
 document.addEventListener('DOMContentLoaded', start)
