@@ -89,7 +89,7 @@ function renderLista() {
 }
 
 function eventoIngresoProducto() {
-    document.querySelector('#btn-entrada-producto').addEventListener('click', () => {
+    document.querySelector('#btn-entrada-producto').addEventListener('click', async () => {
         console.log('btn-entrada-producto')
 
         const input = document.getElementById('ingreso-producto')
@@ -98,9 +98,28 @@ function eventoIngresoProducto() {
         console.log(producto)
 
         if (producto) {
-            listaProductos.push({ nombre: producto, cantidad: 1, precio: 1})
-            renderLista()
-            input.value = ''
+            const nuevoProducto = { nombre: producto, cantidad: 1, precio: 1}
+
+            // ! 1. Modificar el back (Agregar el producto en el back)
+            // Lo que tenemos que hacer es un petición POST (C:CREATE -> CRUD)
+            const options = {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify(nuevoProducto) // un obj de js -> en una cadena (string)
+            }
+            
+            try {
+                const productoCreado = await handleHttp('http://localhost:8080/productos/', options)
+
+                // ! 2. Modifico el array del front
+                listaProductos.push(productoCreado)
+
+                renderLista()
+                input.value = ''
+            } catch (error) {
+                console.error(error)
+            }
+
         } else {
             Swal.fire("Debe ingresar un producto válido");
             //console.log('Debe ingresar un producto válido');
@@ -214,6 +233,7 @@ function eventoCambiarCantidadYPrecio() {
 async function peticionAsincronica() {
 
     try {
+        // Petición GET -> (R:READ -> CRUD)
         const productos = await handleHttp('http://localhost:8080/productos/')
         console.log(productos)
         listaProductos = productos
