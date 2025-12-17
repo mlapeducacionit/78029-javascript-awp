@@ -73,7 +73,8 @@ function renderLista() {
                    <span class="w-12 flex justify-center">
                     <button 
                         class="material-icons btn-borrar flex items-center justify-around bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 shadow transition cursor-pointer ms-2"
-                        data-indice="${indice}">
+                        data-indice="${indice}"
+                        data-id="${prod.id}">
                         remove_shopping_cart
                     </button>
                    </span>
@@ -168,6 +169,27 @@ function eventoBorradoProductos() {
         }
 
         handleNotificacion(objetoMensajes, () => {
+            // ! 1. Borrado en el backend 
+            listaProductos.forEach( async producto => {
+
+                try {
+                    console.log(producto)
+
+                    const options = {
+                        method: 'DELETE'
+                    }
+
+                    const urlEliminacion = 'http://localhost:8080/productos/' + producto.id
+
+
+                    await handleHttp(urlEliminacion, options)
+                } catch (error) {
+                    console.error(error)
+                }
+
+
+            })
+            // ! 2. Borrado en el frontend
             listaProductos = []
             renderLista()
         })
@@ -177,18 +199,32 @@ function eventoBorradoProductos() {
 
 function borrarProducto(indice) {
 
-    const nombreProductoABorrar = listaProductos[indice].nombre
-
+    const productoAEliminar = listaProductos[indice]    
+    const nombreProducto = productoAEliminar.nombre
     const objMensajes = {
-        textoPrincipal: `¿Estás seguro que queres borrar ${nombreProductoABorrar}?`,
+        textoPrincipal: `¿Estás seguro que queres borrar ${nombreProducto}?`,
         descripcion:  "No vas a poder volver a atrás",
         textoSecundario: "Borrado el producto!",
-        descripcionSecundaria: `Se borró ${nombreProductoABorrar}`,
+        descripcionSecundaria: `Se borró ${nombreProducto}`,
     }
 
-    handleNotificacion(objMensajes, () => {
+    handleNotificacion(objMensajes, async () => {
+        try {
+            // 1. Borrado producto backend
+            const urlEliminar = 'http://localhost:8080/productos/' + productoAEliminar.id
+            
+            const options = {
+                method: 'DELETE'
+            }
+
+        await handleHttp(urlEliminar, options)
+
+        // 2. Borrado producto frontend
         listaProductos.splice(indice, 1)
         renderLista()
+        } catch (error) {
+            console.error(error)
+        }
     })
 
     
@@ -214,12 +250,62 @@ function eventoBorradoUnProducto() {
 
 function eventoCambiarCantidadYPrecio() {
 
-    function cambiarValor(tipo, elemento) {
+    async function cambiarValor(tipo, elemento) {
+        // Actualización de productos en el back
+        // PATCH -> Me sirve para actualizar las key que justo se esten editando
+        // PUT -> Me permite editar todo el objeto completo. O sea la petición tiene que viajar lo que tenía más lo que se edito
+
+        // PATCH
+        /* const productoAActualizar = {
+            nombre: 'PC Gamer'
+        }
+
+        const producto = {
+            nombre: 'PC Gamer',
+            categoria: 'Informatica',
+            precio: 2323,
+        } */
+
+        // PUT
+       /*  const productoAActualizar = {
+            nombre: 'PC',
+            categoria: 'Informatica',
+            precio: 2323,
+        }
+
+
+        const producto = {
+            nombre: 'PC Gamer',
+            categoria: 'Informatica',
+            precio: 2323,
+        } */
+
         const boton = elemento.parentElement.parentElement.querySelector('button')
         const indice = boton.dataset.indice
-        const precio = elemento.value
+        const id = boton.dataset.id
+        let valor = elemento.value
+        valor = Number(valor)
 
-        listaProductos[indice][tipo] = Number(precio) // input -> nos van devolver un cadena
+        try {
+
+            const urlEdicion = 'http://localhost:8080/productos/' + id
+            //console.log(urlEdicion)
+
+            const options = {
+                method: 'PATCH',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify( { [tipo]: valor } ) // precio: valor || cantidad: valor
+            }
+
+            handleHttp(urlEdicion, options)
+            
+        } catch (error) {
+            
+        }
+
+        listaProductos[indice][tipo] = valor // input -> nos van devolver un cadena
     }
 
     document.getElementById('lista').addEventListener('change', e => {
