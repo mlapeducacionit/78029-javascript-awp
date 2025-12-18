@@ -1,0 +1,34 @@
+{
+    "theme_color": "#8936FF",
+    "background_color": "#c1b0e8",
+    "icons": [
+        {
+            "purpose": "maskable",
+            "sizes": "512x512",
+            "src": "iconos/icon512_maskable.png",
+            "type": "image/png"
+        },
+        {
+            "purpose": "any",
+            "sizes": "512x512",
+            "src": "iconos/icon512_rounded.png",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+        {
+        "src": "/screenshots/screenshot.jpg",
+        "type": "image/jpg",
+        "sizes": "1080x1920"
+        }
+    ],
+    "orientation": "any",
+    "display": "standalone",
+    "dir": "left",
+    "lang": "es-ES",
+    "name": "Super Lista de Compras",
+    "short_name": "Super Lista",
+    "start_url": "/",
+    "scope": "/",
+    "description": "Se trata de una aplicación agregar a una lista de compras los diferentes productos que uno tiene que comprar"
+}
