@@ -330,10 +330,81 @@ async function peticionAsincronica() {
 
 }
 
+async function registrarServiceWorker() {
+    console.log('Se está registrando el SW...');
+
+    if ( 'serviceWorker' in navigator ) {
+        console.log('Está disponible el SW...')
+        try {
+            const reg = await navigator.serviceWorker.register('/sw.js')
+            console.log('El service worker se registró correctamente', reg)
+        } catch (error) {
+            console.error('Erro al registrar el service worker', error)
+        }
+    } else {
+        console.error('serviceWorker no está disponbile en navigator')
+    }
+
+}
+
+function testCaches() {
+    console.log('Probando caches!')
+
+    if ( window.caches ) {
+        console.log('El browser soporta caches')
+
+        // ! Creo espacios de caches
+        caches.open('prueba-1') // Un espacio de cache, es un contenedor.
+        caches.open('prueba-2')
+        caches.open('prueba-3')
+
+        // ! Comprobamos si una cache existe o no
+        caches.has('prueba-2').then(rta => console.log(rta)) // true o false -> true
+        caches.has('prueba-3').then(rta => console.log(rta)) // true
+        caches.has('prueba-4').then(rta => console.log(rta)) // false
+        // caches.has('prueba-4').then(console.log) // false
+        // caches.has('prueba-4').then(alert) // false
+
+        // ! Borrar espacio de cache
+        caches.delete('prueba-1').then(rta => console.log(rta))
+
+        // ! Listar todas las caches (Me devuelve un array de nombres de caches)
+        //caches.keys().then(rta => console.log(rta))
+        /* caches.keys().then(rta => 
+            rta.forEach(c => {
+                caches.delete(c).then(rta => console.log(rta))
+            })
+        )
+         */
+
+        // ! Abro una cache y trabajo con ese espacio de cache
+        caches.open('cache-v1.1').then( cache => {
+            console.log(cache) // <----- la cache que estoy abriendo
+            console.log(caches) // <---- El objeto gestor de cachesç
+
+            // ! Agrego un recurso a la cache
+            //cache.add('../index.html')
+            //cache.add('./style.css')
+
+            // ! Agrego varios recurso a la cache
+            //console.log(cache)
+
+        })
+
+        
+
+    } else {
+        console.error('No soporta caches')
+    }
+}
+
+
 async function start() {
     try {
         console.log('Se cargó todo el DOM!')
         await peticionAsincronica()
+        registrarServiceWorker()
+        testCaches()
         renderLista()
         eventoIngresoProducto()
         eventoBorradoProductos()

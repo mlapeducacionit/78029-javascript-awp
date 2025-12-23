@@ -1,5 +1,5 @@
 {
-    "theme_color": "#8936FF",
+    "theme_color": "#432dd7",
     "background_color": "#c1b0e8",
     "icons": [
         {
@@ -24,7 +24,6 @@
     ],
     "orientation": "any",
     "display": "standalone",
-    "dir": "left",
     "lang": "es-ES",
     "name": "Super Lista de Compras",
     "short_name": "Super Lista",

@@ -28,7 +28,7 @@ Es un archivo de configuración en formato JSON que describe una aplicación y l
 
 ## Recursos útiles para crear el manifest y trabajar con PWA
 
-<https://progressier.com/pwa-manifest-generator><
+<https://progressier.com/pwa-manifest-generator>
 <https://app-manifest.firebaseapp.com/>
 <https://developer.mozilla.org/es/docs/Web/Progressive_web_apps/Manifest>
 <https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest>
@@ -116,3 +116,61 @@ Es un archivo de configuración en formato JSON que describe una aplicación y l
         * icons
 * description: Descripción general de la aplicación (Durante la instalación, Tiendas) -> Ayuda al SEO y la accesibilidad
 * screenshots: Imágenes que muestran como se ve la app. 
+
+# Service Worker
+
+Un Service Worker es un script que corre en segundo plano en el navegador(separado de la página web) y permite la creación de PWA, offline, notificaciones push y sincronización en segundo plano. Esta basado en eventos
+
+## Eventos del Service Worker
+
+* Install
+Cuando el service worker se registrar por primera vez o se actualiza.
+> ¿Para que sirve?
+Normalmente se usa para cacher archivos (Html, css, js, imágenes)
+**IMPORTANTE**: Si no está el evento de install el SW no se activa
+
+* activate
+Después del install, cuando el service worker toma el control
+> ¿Para qué sirve?
+Limpiar caches viejos y activar la neuva versión
+Después del activate el SW empieza controlar las páginas
+
+* fetch
+Cada vez que la app hace una petición (HTML, CSS, API, imágenes, etc)
+> ¿Para qué sirve?
+Para interceptar perticiones y decidir.
+  * Usar la caché
+  * Ir a la red
+  * Combinación de ambos (estrategias offline)
+Base de la applicación funcionando offline. (Modo offline)
+
+* push
+Cuando el servidor envía una notifiación push, incluso si la app esta cerrada
+> ¿Para qué sirve?
+Mostrar notificaciones al usuario. Funciona incluso con la app cerrada.
+
+* sync
+(Background Sync)
+Cuando el navegador recupera conexión a internet
+> ¿Para qué sirve?
+Enviar datos pendientes (formularios, mensajes) cuando vuelva la conexión
+PWA -> Offline first
+
+* menssage
+Cuando la pñágina web le envía mensajes al service worker (o viceversa)
+> ¿Para qué sirve?
+Comunicación directa entre la app y el service worker
+
+## NOTA
+El service worker tiene que estar en la raíz del proyecto.
+
+# DOM y BOM
+
+BOM -> Browser Object Model (window)
+DOM -> Document Object Model (document)
+
+# Service Worker -> (BOM)
+<https://developer.mozilla.org/es/docs/Web/API/Service_Worker_API>
+
+# Caches -> (BOM)
+<https://developer.mozilla.org/es/docs/Web/API/CacheStorage>
