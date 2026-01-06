@@ -349,6 +349,9 @@ async function registrarServiceWorker() {
 
 function testCaches() {
     console.log('Probando caches!')
+    /* API CACHES -> BOM -> Browser Object Model */
+    /* https://caniuse.com/ */
+    /* https://www.caniemail.com/ */
 
     if ( window.caches ) {
         console.log('El browser soporta caches')
@@ -382,12 +385,54 @@ function testCaches() {
             console.log(cache) // <----- la cache que estoy abriendo
             console.log(caches) // <---- El objeto gestor de cachesç
 
-            // ! Agrego un recurso a la cache
+            // ! add() Agrego un recurso a la cache
             //cache.add('../index.html')
             //cache.add('./style.css')
 
-            // ! Agrego varios recurso a la cache
+            // ! addAll() Agrego varios recurso a la cache
             //console.log(cache)
+
+            cache.addAll([
+                '../index.html',
+                './style.css',
+                './mail.js'
+            ]).then(() => {
+                console.log('Recursos agregados')
+
+                //cache.delete('./style.css').then(console.log)
+
+                cache.match('./style.css').then( res => {
+                    if (res) {
+                        console.log('Recurso encontrado...')
+                        //res.text().then(console.log)
+                    } else {
+                        console.error('Recurso inexistente.')
+                    }
+                })
+
+                // ! creo o modificar el contenido de un recurso
+                cache.put('../index.html', new Response('Hola mundo!'))
+
+                // ! Listo doos los recursos que contiene la cache.
+                //cache.keys().then(recursos => console.log('Recurso de cache', recursos))
+                cache.keys().then( recursos => {
+                    //console.log(recursos)
+                    recursos.forEach( recurso => {
+                        console.log(recurso.url)
+                    })
+                })
+
+                // ! Listo todos los nombres de los espacios de CACHE que contienen caches.
+                caches.keys().then( nombre => {
+                    console.log('Nombres de caches', nombre)
+                })
+
+            }).catch(error => {
+                console.error('No se pudo agregar los recursos a la cache')
+                console.error(error)
+            })
+
+
 
         })
 
@@ -404,7 +449,7 @@ async function start() {
         console.log('Se cargó todo el DOM!')
         await peticionAsincronica()
         registrarServiceWorker()
-        testCaches()
+        // testCaches()
         renderLista()
         eventoIngresoProducto()
         eventoBorradoProductos()
