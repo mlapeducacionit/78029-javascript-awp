@@ -1,7 +1,7 @@
 // En el service worker no es conveniente colocar lógica fuera de los callback de los eventos de service worker
-const CACHE_STATIC_NAME = 'static-v01'
-const CACHE_INMUTABLE_NAME = 'inmutable-v01'
-const CACHE_DYNAMIC_NAME = 'dynamic-v01'
+const CACHE_STATIC_NAME = 'static-v02'
+const CACHE_INMUTABLE_NAME = 'inmutable-v02'
+const CACHE_DYNAMIC_NAME = 'dynamic-v02'
 
 self.addEventListener('install', e => {
     console.log('sw install...')
@@ -17,15 +17,11 @@ self.addEventListener('install', e => {
     const cacheStatic = caches.open(CACHE_STATIC_NAME).then(cache => {
         return cache.addAll([
             '/',
-            '../index.html',
-            './style.css',
-            './main.js',
-            './utils/handle-http.js',
-            './utils/handle-notificacion.js'
+            '/index.html'
         ])
     })
 
-    const cacheInmutable = caches.open(CACHE_DYNAMIC_NAME).then(cache => {
+    const cacheInmutable = caches.open(CACHE_INMUTABLE_NAME).then(cache => {
         return cache.addAll[
             'https://fonts.googleapis.com/icon?family=Material+Icons'
         ]
@@ -72,30 +68,37 @@ self.addEventListener('fetch', e => {
     console.log('sw fetch...')
     
     const { request } = e
-    
+
+    /* if (request.method !== 'GET') return */
+        
     // No hagas las respuesta vos servidor, la respuesta te la entrego yo service worker.
     // El service está tomando el control de las respuesta que pueda recibir.
     e.respondWith(
-        caches.match(request).then(cachedResponse => {
-            console.log(cachedResponse)
-        })
-
-       /*  return fetch(request)
-            .then()
-            .catch() */
-
+        caches.match(request)
+            .then(cachedResponse => {
+                console.log(cachedResponse)
+                cachedResponse || fetch(request).then(netRes => {
+                    const clone = netRes.clone()
+                    console.log(netRes)
+                    caches.open(CACHE_DYNAMIC_NAME).then(cache => {
+                        cache.put(request, clone)
+                    })
+                    return  netRes
+                })
+            })
+            .catch(err => {
+                console.error(err)
+            })
+    
     )
 
-
-   /*  return fetch(request)
-                .then(networkResponse => {
-                    console.log(networkResponse)
-                }) */
-    
-    //e.waitUntil(e.request)
 })
 
-
+self.addEventListener('push', e => {
+    console.log('push', e)
+    const datos = e.data.text() // TEXT | JSON
+    console.log(datos)
+})
 
 
 

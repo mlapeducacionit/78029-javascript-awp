@@ -174,3 +174,247 @@ DOM -> Document Object Model (document)
 
 # Caches -> (BOM)
 <https://developer.mozilla.org/es/docs/Web/API/CacheStorage>
+
+# Service Worker y Manifest
+
+## Ubicación recomendable SW
+
+* En aplicaciones tradicionales en la raíz de la aplicación
+* En aplicaciones tipo Vite va dentro de la carpeta /public
+
+Nota: Dentro de 'public' en general lo que se coloca son archivos estáticos (jpg, png, webp, ico, pdf, mp4, mp3).
+
+## Modo desarrollo vs Producción (Para probar la aplicación)
+
+### Modo desarrollo
+
+```sh
+npm run dev
+```
+
+### Modo Producción (Probar app)
+
+```sh
+npm run build # Lo que hace es generar los archivos de producción (deploy)
+npm run preview
+```  
+
+# Push Notification
+
+<https://www.innovaportal.com/innovaportal/v/667/1/innova.front/web-push-notifications-que-son>
+
+## Servidor Web Push (node)
+
+<https://www.npmjs.com/package/web-push>
+
+```sh
+npm i web-push -g # Instala web push como un cli, dentro de nuestro sistema
+``` 
+
+> Verificar
+
+```sh
+web-push --version
+```
+
+# Con Web Push (App)
+Hacemos un proceso manual
+
+## Generar VAPID KEYS (Servidor)
+
+Son indentifacadores para colocar en nuestro backend y que Google sepa quienes somos
+
+```sh
+web-push generate-vapid-keys --json
+# --
+{"publicKey":"BKgJWSOh7qVltagSKPJcozMDRVkoCMmRXACK6k_kPkuj-sF4O57tJpUow3q4P-OP9-aMCfxzOGz0Q2zz-BqS0GU","privateKey":"chck0E-S2Vpyit4_41guLTe_5UzdjtKb76BJ3IzsKeM"}
+```
+
+# Suscribirme en PWA (Nuestra aplicación)
+
+# Pasos para que nuestra aplicación empiece a recibir notificaciones push
+
+## Agrego en el index.html
+
+```html
+<!-- ---------------------------------------- -->
+<!--                   Push                   -->
+<!-- ---------------------------------------- -->
+<section>
+    <p>
+        <button disabled
+            class="js-push-btn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+            Habilitar Notificaciones Push
+        </button>
+    </p>
+    <div class="subscription-details js-subscription-details is-invisible">
+        <pre><code class="js-subscription-json"></code></pre>
+    </div>
+
+</section>
+```
+
+## Agrego en public el archivo push.js
+
+```js
+const applicationServerPublicKey = 'BN0cjaW6di6rcemJvO0jnPv28yMQSui3m39CQUkvALukIrLUMsdIJ3JWqJphscBaysJDx4BCfjE8SU8wQxTYb7g'
+
+let pushButton = null;
+let isSubscribed = false;
+let swRegistration = null;
+
+function urlB64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/_/g, '/');
+
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    //console.log(outputArray)
+    return outputArray;
+}
+
+
+function updateBtn() {
+    if (isSubscribed) {
+        pushButton.textContent = 'DesHabilitar Notificaciones Push';
+    } else {
+        pushButton.textContent = 'Habilitar Notificaciones Push';
+    }
+
+    pushButton.disabled = false;
+}
+
+function updateSubscriptionOnServer(subscription) {
+    // TODO: Send subscription to application server
+
+    const subscriptionJson = document.querySelector('.js-subscription-json');
+    const subscriptionDetails =
+        document.querySelector('.js-subscription-details');
+
+    if (subscription) {
+        subscriptionJson.textContent = JSON.stringify(subscription);
+        subscriptionDetails.classList.remove('is-invisible');
+    } else {
+        subscriptionDetails.classList.add('is-invisible');
+    }
+}
+
+
+function subscribeUser() {
+    const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+    swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: applicationServerKey
+    })
+        .then(function (subscription) {
+            console.log('User is subscribed:', subscription);
+
+            updateSubscriptionOnServer(subscription);
+
+            isSubscribed = true;
+
+            updateBtn();
+        })
+        .catch(function (err) {
+            console.log('Failed to subscribe the user: ', err);
+            updateBtn();
+        });
+}
+
+
+function unsubscribeUser() {
+    swRegistration.pushManager.getSubscription()
+        .then(function (subscription) {
+            if (subscription) {
+                return subscription.unsubscribe();
+            }
+        })
+        .catch(function (error) {
+            console.log('Error unsubscribing', error);
+        })
+        .then(function () {
+            updateSubscriptionOnServer(null);
+
+            console.log('User is unsubscribed.');
+            isSubscribed = false;
+
+            updateBtn();
+        });
+}
+
+
+function initialiseUI(reg) {
+
+    swRegistration = reg
+    pushButton = document.querySelector('.js-push-btn');
+
+    pushButton.addEventListener('click', function () {
+        pushButton.disabled = true;
+        if (isSubscribed) {
+            unsubscribeUser();
+        } else {
+            subscribeUser();
+        }
+    });
+
+    // Set the initial subscription value
+    swRegistration.pushManager.getSubscription()
+        .then(function (subscription) {
+            isSubscribed = !(subscription === null);
+
+            if (isSubscribed) {
+                console.log('User IS subscribed.');
+            } else {
+                console.log('User is NOT subscribed.');
+            }
+
+            updateBtn();
+        });
+}
+```  
+
+## API Notification
+
+<https://developer.mozilla.org/es/docs/Web/API/Notification>
+
+# Agrego en el sw.js el evento de SW push
+
+```js
+self.addEventListener('push', e => {
+    console.log('push', e)
+    const datos = e.data.text() // TEXT | JSON
+    console.log(datos)
+})
+``` 
+
+## Una vez pedidas la public key y la private key
+Copio en el archivo push.js la publicKey
+
+## Activo mis notificaciones push
+Presionando el botón de habilitar las notificaciones push
+
+```json
+{"endpoint":"https://fcm.googleapis.com/fcm/send/doehr_pSYVo:APA91bEh3WH10811MYXuu6YCW6CRp3MaEZIhoZ8n4ZGF3qmb1zsfq6qD-JJxhHyqV-NV1trEg9MEfhwE0d2pNYt78qjDqOoxOJ5ijurmzFIjbRnS0NOztmVgDMjN0H8P86l-V2T3dNtc","expirationTime":null,"keys":{"p256dh":"BA6YCGNCBik7jcnScLON4utyvCAbKBNh2DAs8_EKcl4rXzsOgrWwCBdS6QX5YGlG848C3cop-r72Vq_Pbc90SB8","auth":"daNrHD-2hThdoNjaEdlY3A"}}
+``` 
+
+## Enviamos la notificacion
+
+```sh
+web-push send-notification --endpoint=<url> [--key=<browser key>] [--auth=<auth secret>] [--payload=<message>] [--ttl=<seconds>] [--encoding=<encoding type>] [--vapid-subject=<vapid subject>] [--vapid-pubkey=<public key url base64>] [--vapid-pvtkey=<private key url base64>] [--proxy=<http proxy uri, e.g: http://127.0.0.1:8889>] [--gcm-api-key=<api key>]
+```
+
+```sh
+web-push generate-vapid-keys --json
+# --
+{"publicKey":"BKgJWSOh7qVltagSKPJcozMDRVkoCMmRXACK6k_kPkuj-sF4O57tJpUow3q4P-OP9-aMCfxzOGz0Q2zz-BqS0GU","privateKey":"chck0E-S2Vpyit4_41guLTe_5UzdjtKb76BJ3IzsKeM"}
+```
+
+```sh
+web-push send-notification --endpoint="https://fcm.googleapis.com/fcm/send/doehr_pSYVo:APA91bEh3WH10811MYXuu6YCW6CRp3MaEZIhoZ8n4ZGF3qmb1zsfq6qD-JJxhHyqV-NV1trEg9MEfhwE0d2pNYt78qjDqOoxOJ5ijurmzFIjbRnS0NOztmVgDMjN0H8P86l-V2T3dNtc" --key="BA6YCGNCBik7jcnScLON4utyvCAbKBNh2DAs8_EKcl4rXzsOgrWwCBdS6QX5YGlG848C3cop-r72Vq_Pbc90SB8" --auth="daNrHD-2hThdoNjaEdlY3A" --payload="Hola WEB-PUSH!!! 123" --ttl=0 --vapid-subject="mailto: maxi@gmail.com" --vapid-pubkey="BKgJWSOh7qVltagSKPJcozMDRVkoCMmRXACK6k_kPkuj-sF4O57tJpUow3q4P-OP9-aMCfxzOGz0Q2zz-BqS0GU" --vapid-pvtkey="chck0E-S2Vpyit4_41guLTe_5UzdjtKb76BJ3IzsKeM"
+``` 

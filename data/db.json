@@ -47,6 +47,12 @@
       "nombre": "Te",
       "cantidad": 1,
       "precio": 1
+    },
+    {
+      "id": "6987",
+      "nombre": "Te",
+      "cantidad": 1,
+      "precio": 1
     }
   ]
 }

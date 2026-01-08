@@ -17,11 +17,6 @@ const sidebar = document.getElementById('sidebar')
 const closeButton = document.getElementById('close-sidebar')
 const toggleBotton = document.getElementById('toogle-sidebar')
 
-//console.log(overlay);
-//console.log(sidebar);
-//console.log(closeSidebar);
-//console.log(toogleSidebar);
-
 const openSidebar = () => {
     console.log('openSidebar')
     sidebar.classList.remove('-translate-x-full')
@@ -37,6 +32,10 @@ const closeSidebar = () => {
 toggleBotton.addEventListener('click', openSidebar)
 closeButton.addEventListener('click', closeSidebar)
 overlay.addEventListener('click', closeSidebar)
+
+/* ---------------------------------------------------------- */
+/* ---------------------- RENDER LISTA ---------------------- */
+/* ---------------------------------------------------------- */
 
 function renderLista() {
     console.log('Se hace el renderizado...')
@@ -86,8 +85,11 @@ function renderLista() {
 
     crearLista = false
 
-
 }
+
+/* ---------------------------------------------------------- */
+/* ----------------- EVENTO INGRESO PRODUCTO ---------------- */
+/* ---------------------------------------------------------- */
 
 function eventoIngresoProducto() {
     document.querySelector('#btn-entrada-producto').addEventListener('click', async () => {
@@ -129,37 +131,13 @@ function eventoIngresoProducto() {
     })
 }
 
+/* ---------------------------------------------------------- */
+/* --------------- EVENTOS BORRADO PRODUCTOS ---------------- */
+/* ---------------------------------------------------------- */
+
 function eventoBorradoProductos() {
     
     document.querySelector('#btn-borrar-productos').addEventListener('click', () => {
-                
-        /* if (confirm('¿Estás seguro que querés borrar todos los productos de tu super lista')) {
-            console.log('Borrado todos los productos...')
-            listaProductos = []
-            renderLista()
-        } */
-
-        /* Swal.fire({
-            title: "¿Estás seguro que querés borrar todos los productos de tu super lista?",
-            text: "No vas a poder volver atrás",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    listaProductos = []
-                    renderLista()
-
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: "Your file has been deleted.",
-                        icon: "success"
-                    });
-
-                }
-        }); */
 
         const objetoMensajes = {
             textoPrincipal: "¿Estás seguro que queres borrar toda la super lista?",
@@ -187,7 +165,6 @@ function eventoBorradoProductos() {
                     console.error(error)
                 }
 
-
             })
             // ! 2. Borrado en el frontend
             listaProductos = []
@@ -196,6 +173,10 @@ function eventoBorradoProductos() {
 
     })
 }
+
+/* ---------------------------------------------------------- */
+/* ------------------ BORRADO UN PRODUCTO ------------------- */
+/* ---------------------------------------------------------- */
 
 function borrarProducto(indice) {
 
@@ -230,6 +211,10 @@ function borrarProducto(indice) {
     
 }
 
+/* ---------------------------------------------------------- */
+/* ----------- EVENTO BORRADO UN PRODUCTO ------------------- */
+/* ---------------------------------------------------------- */
+
 function eventoBorradoUnProducto() {
     document.getElementById('lista').addEventListener('click', e => {
         //console.log('Hicieron clic sobre cualquier elemento dentro de la lista')
@@ -247,6 +232,10 @@ function eventoBorradoUnProducto() {
         }
     })
 }
+
+/* ---------------------------------------------------------- */
+/* ----------- EVENTO CAMBIAR CANTIDAD Y PRECIO ------------- */
+/* ---------------------------------------------------------- */
 
 function eventoCambiarCantidadYPrecio() {
 
@@ -316,6 +305,10 @@ function eventoCambiarCantidadYPrecio() {
     })
 }
 
+/* ---------------------------------------------- */
+/* ----------------- Petición Async ------------- */
+/* ---------------------------------------------- */
+
 async function peticionAsincronica() {
 
     try {
@@ -330,6 +323,10 @@ async function peticionAsincronica() {
 
 }
 
+/* ---------------------------------------------- */
+/* ----------------- SERVICE WORKER ------------- */
+/* ---------------------------------------------- */
+
 async function registrarServiceWorker() {
     console.log('Se está registrando el SW...');
 
@@ -338,6 +335,22 @@ async function registrarServiceWorker() {
         try {
             const reg = await navigator.serviceWorker.register('/sw.js')
             console.log('El service worker se registró correctamente', reg)
+            // El initialiseUI recibe el registro de service worker y habilitar el SW para trabajar con notificaciones
+
+            initialiseUI(reg)
+
+            // Habilitamos el funcionamiento de las notificaciones
+            // API Notification
+            Notification.requestPermission((res) => {
+                if ( res === 'granted') {
+                    navigator.serviceWorker.ready.then(reg => {
+                        console.warn('Se pueden enviar notificaciones al usuario!')
+                        console.log(reg)
+                    })
+                }
+            })
+
+
         } catch (error) {
             console.error('Erro al registrar el service worker', error)
         }
@@ -347,109 +360,11 @@ async function registrarServiceWorker() {
 
 }
 
-function testCaches() {
-    console.log('Probando caches!')
-    /* API CACHES -> BOM -> Browser Object Model */
-    /* https://caniuse.com/ */
-    /* https://www.caniemail.com/ */
-
-    if ( window.caches ) {
-        console.log('El browser soporta caches')
-
-        // ! Creo espacios de caches
-        caches.open('prueba-1') // Un espacio de cache, es un contenedor.
-        caches.open('prueba-2')
-        caches.open('prueba-3')
-
-        // ! Comprobamos si una cache existe o no
-        caches.has('prueba-2').then(rta => console.log(rta)) // true o false -> true
-        caches.has('prueba-3').then(rta => console.log(rta)) // true
-        caches.has('prueba-4').then(rta => console.log(rta)) // false
-        // caches.has('prueba-4').then(console.log) // false
-        // caches.has('prueba-4').then(alert) // false
-
-        // ! Borrar espacio de cache
-        caches.delete('prueba-1').then(rta => console.log(rta))
-
-        // ! Listar todas las caches (Me devuelve un array de nombres de caches)
-        //caches.keys().then(rta => console.log(rta))
-        /* caches.keys().then(rta => 
-            rta.forEach(c => {
-                caches.delete(c).then(rta => console.log(rta))
-            })
-        )
-         */
-
-        // ! Abro una cache y trabajo con ese espacio de cache
-        caches.open('cache-v1.1').then( cache => {
-            console.log(cache) // <----- la cache que estoy abriendo
-            console.log(caches) // <---- El objeto gestor de cachesç
-
-            // ! add() Agrego un recurso a la cache
-            //cache.add('../index.html')
-            //cache.add('./style.css')
-
-            // ! addAll() Agrego varios recurso a la cache
-            //console.log(cache)
-
-            cache.addAll([
-                '../index.html',
-                './style.css',
-                './mail.js'
-            ]).then(() => {
-                console.log('Recursos agregados')
-
-                //cache.delete('./style.css').then(console.log)
-
-                cache.match('./style.css').then( res => {
-                    if (res) {
-                        console.log('Recurso encontrado...')
-                        //res.text().then(console.log)
-                    } else {
-                        console.error('Recurso inexistente.')
-                    }
-                })
-
-                // ! creo o modificar el contenido de un recurso
-                cache.put('../index.html', new Response('Hola mundo!'))
-
-                // ! Listo doos los recursos que contiene la cache.
-                //cache.keys().then(recursos => console.log('Recurso de cache', recursos))
-                cache.keys().then( recursos => {
-                    //console.log(recursos)
-                    recursos.forEach( recurso => {
-                        console.log(recurso.url)
-                    })
-                })
-
-                // ! Listo todos los nombres de los espacios de CACHE que contienen caches.
-                caches.keys().then( nombre => {
-                    console.log('Nombres de caches', nombre)
-                })
-
-            }).catch(error => {
-                console.error('No se pudo agregar los recursos a la cache')
-                console.error(error)
-            })
-
-
-
-        })
-
-        
-
-    } else {
-        console.error('No soporta caches')
-    }
-}
-
-
 async function start() {
     try {
         console.log('Se cargó todo el DOM!')
         await peticionAsincronica()
         registrarServiceWorker()
-        // testCaches()
         renderLista()
         eventoIngresoProducto()
         eventoBorradoProductos()
