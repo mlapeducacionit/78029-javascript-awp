@@ -418,3 +418,16 @@ web-push generate-vapid-keys --json
 ```sh
 web-push send-notification --endpoint="https://fcm.googleapis.com/fcm/send/doehr_pSYVo:APA91bEh3WH10811MYXuu6YCW6CRp3MaEZIhoZ8n4ZGF3qmb1zsfq6qD-JJxhHyqV-NV1trEg9MEfhwE0d2pNYt78qjDqOoxOJ5ijurmzFIjbRnS0NOztmVgDMjN0H8P86l-V2T3dNtc" --key="BA6YCGNCBik7jcnScLON4utyvCAbKBNh2DAs8_EKcl4rXzsOgrWwCBdS6QX5YGlG848C3cop-r72Vq_Pbc90SB8" --auth="daNrHD-2hThdoNjaEdlY3A" --payload="Hola WEB-PUSH!!! 123" --ttl=0 --vapid-subject="mailto: maxi@gmail.com" --vapid-pubkey="BKgJWSOh7qVltagSKPJcozMDRVkoCMmRXACK6k_kPkuj-sF4O57tJpUow3q4P-OP9-aMCfxzOGz0Q2zz-BqS0GU" --vapid-pvtkey="chck0E-S2Vpyit4_41guLTe_5UzdjtKb76BJ3IzsKeM"
 ``` 
+
+## Web Push
+Servidor backend que se comunica con el servicio de Google
+
+```sh
+cd 02-web-push/
+``` 
+## Web Push automático
+Aplicación completa integrada al servidor web push
+
+```sh
+cd 04-super-lista-push-automatico
+```
