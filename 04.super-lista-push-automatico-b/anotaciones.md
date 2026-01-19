@@ -1,0 +1,3 @@
+```sh
+node src/cli.js send-notification --endpoint="https://fcm.googleapis.com/fcm/send/ctKzCcE_f0A:APA91bHcCC-u-gA1EMEH-LO3sEPSFm6Vg8YBuFIGfb8AUoK5RbKB2Crz8WyNlIdIkS8537FgcT117ESzBvKGWDdbQmxBgKVnu8ueY58b_vNj2q6hDkj5BDwVcILOwHMIXNr4yT_fKorK" --key="BBGaDfizhSYMEMu6qInHU7Thl28rikU_SCirWGQpo5tGaady4ZAlf9jawJW9tbloAXIp08D2dVL8zqjX3GweHy0" --auth="t_iHQb_JbQQ6mTxJmz4-AA" --payload="HOLA MUNDO DESDE NODE WEBPUSH CÓDIGO 123" --ttl=0 --vapid-subject="mailto: danielsanchez68@hotmail.com" --vapid-pubkey="BBX3S71oHu6B7GsMILnhxvqrY7eXnBHr54d7qkrcGYM7aGpBid6h0LCBMQJg-MAp8m9h5L1y-Q1i7QscOXBF3b0" --vapid-pvtkey="xi1QJZ7a4tUyPPVYab1mhNIbbrzYKT5sGxUtxJ-_l3U"
+```
