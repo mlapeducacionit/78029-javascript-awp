@@ -1,0 +1,108 @@
+import { useState } from 'react'
+import './App.css'
+import ItemLista from './components/ItemLista'
+import { useEffect } from 'react'
+import handleHttp from './utils/handle-http'
+
+function App() {
+  const [productos, setProductos] = useState(null)
+
+  useEffect(() => {
+    console.log(import.meta.env.VITE_API_PRODUCTOS)
+    getAll()
+  }, [])
+
+  const getAll = async () => {
+    const productos = await handleHttp(import.meta.env.VITE_API_PRODUCTOS)
+    setProductos(productos)
+  }
+
+  return (
+    <>
+     {/*  <!-- layout principal --> */}
+     <div className="flex h-screen">
+      {/* <!-- Overlay --> */}
+      <div id="overlay" className="fixed inset-0 bg-black/50 hidden z-30 md:hidden"></div>
+
+     {/*  <!-- Sibebar --> */}
+      <aside id="sidebar" className="bg-indigo-700 text-white w-64 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40">
+        <div className="px-6 py-4 text-2xl font-semibold border-b border-indigo-600">
+          Servicios
+          {/* <!-- Botón de cierre --> <!-- https://fonts.google.com/icons --> */}
+           <button id="close-sidebar" className="md:hidden cursor-pointer">
+            <span className="material-icons text-white text-2xl">close</span>
+           </button>
+        </div>
+        <nav className="flex-1 px-4 py-4 space-y-2">
+         {/*  <!-- a*4{Servicio $} --> */}
+          <a href="#" className="block px-3 py-2 rounded hover:bg-indigo-600">Servicio 1</a>
+          <a href="#" className="block px-3 py-2 rounded hover:bg-indigo-600">Servicio 2</a>
+          <a href="#" className="block px-3 py-2 rounded hover:bg-indigo-600">Servicio 3</a>
+          <a href="#" className="block px-3 py-2 rounded hover:bg-indigo-600">Servicio 4</a>
+        </nav>
+
+      </aside>
+      {/* <!-- Main Content --> */}
+      <div className="flex-1 flex flex-col md:ml-64 transition-all duration-300">
+        {/* <!-- Header --> */}
+         <header className="bg-indigo-600 text-white flex item-center justify-between px-6 py-3 shadow-md">
+          <div className="flex items-center gap-3">
+            {/* <!-- Botón hamburgüesa --> */}
+           <button id="toogle-sidebar" className="md:hidden focus:outline-none cursor-pointer">
+            <span className="material-icons text-3xl">menu</span>
+           </button>
+           <h1 className="text-xl font-semibold">Super Lista de Productos</h1>
+          </div>
+         </header>
+        {/* <!-- Contenido --> */}
+         <main class="flex-1 overflow-y-auto p-6">
+          <div class="max-w-2xl mx-auto space-y-6">
+
+            {/* <!-- Controles de entrada --> */}
+            <div class="flex flex-wrap items-center gap-4">
+              <div class="flex-1">
+                <label for="ingreso-producto" class="block text-sm font-medium text-gray-700">Ingrese producto</label>
+                <input type="text" id="ingreso-producto" class="mt-1 block w-full rounded-md px-2 py-1 border-gray-300 shadow-sm outline-none focus:border-indigo-500 focus:ring-indigo-500" placeholder="Nombre del producto" />
+              </div>
+              {/* <!-- Botón Agregar --> */}
+               <button id="btn-entrada-producto"
+               class="flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-12 h-12 shadow-md transition cursor-pointer">
+                <span class="material-icons">add_shopping_cart</span>
+               </button>
+              {/*  <!-- Botón borrar --> */}
+               <button id="btn-borrar-productos" class="bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-md transition w-30 cursor-pointer">
+                Borrar
+               </button>
+              {/* <!-- Lista de productos --> */}
+
+            </div>
+            <div id="lista" class="mt-6 space-6">
+              {
+               productos && productos.map((producto) => (
+                 <ItemLista prod={producto} />
+               ))
+              }
+            </div>
+
+            <section>
+                <p>
+                    <button disabled
+                        class="js-push-btn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                        Habilitar Notificaciones Push
+                    </button>
+                </p>
+                <div class="subscription-details js-subscription-details is-invisible">
+                    <pre><code class="js-subscription-json"></code></pre>
+                </div>
+
+            </section>
+
+          </div>
+         </main>
+      </div>
+     </div>
+    </>
+  )
+}
+
+export default App

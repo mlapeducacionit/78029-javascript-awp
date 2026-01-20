@@ -1,0 +1,58 @@
+{
+  "productos": [
+    {
+      "nombre": "Carne",
+      "cantidad": 2,
+      "precio": 12.4,
+      "id": "0e4a"
+    },
+    {
+      "nombre": "Pan",
+      "cantidad": 5,
+      "precio": 23.4,
+      "id": "1156"
+    },
+    {
+      "nombre": "Fideos",
+      "cantidad": 3,
+      "precio": 21.4,
+      "id": "cfad"
+    },
+    {
+      "nombre": "Leche",
+      "cantidad": 55,
+      "precio": 22,
+      "id": "8405"
+    },
+    {
+      "nombre": "Pollo",
+      "cantidad": 1,
+      "precio": 42.4,
+      "id": "29a2"
+    },
+    {
+      "nombre": "Té",
+      "cantidad": 5,
+      "precio": 33.2,
+      "id": "c89b"
+    },
+    {
+      "id": "4177",
+      "nombre": "Leche",
+      "cantidad": 55,
+      "precio": 99.99
+    },
+    {
+      "id": "1f57",
+      "nombre": "Te",
+      "cantidad": 1,
+      "precio": 1
+    },
+    {
+      "id": "6987",
+      "nombre": "Te",
+      "cantidad": 1,
+      "precio": 1
+    }
+  ]
+}
